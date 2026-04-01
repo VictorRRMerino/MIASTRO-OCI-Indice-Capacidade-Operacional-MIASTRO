@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCI — Operational Capacity Index | Miastro</title>
+<meta name="description" content="Descubra em 3 minutos se o próximo passo é contratar ou otimizar. Diagnóstico gratuito de capacidade operacional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--blue:#0064DD;--blue-dark:#004BB0;--blue-light:#E8F0FE;
+--cream:#FFFDF8;--yellow-light:#FFF4DF;
+--black:#111;--gray-dark:#333;--gray-mid:#666;--gray-light:#999;--gray-border:#E5E5E5;--white:#fff;
+--red:#D64545;--orange:#E8913A;--green:#4CAF50;
+--display:'Playfair Display',Georgia,serif;
+--body:'Inter',-apple-system,sans-serif;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--body);color:var(--black);background:var(--cream);line-height:1.6;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;padding:40px 24px}
+
+/* INTRO */
+.intro{text-align:center;padding:40px 0 20px}
+.intro__badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);background:var(--blue-light);padding:6px 16px;border-radius:20px;margin-bottom:24px}
+.intro__title{font-family:var(--display);font-size:2.6rem;font-style:italic;line-height:1.1;margin-bottom:8px}
+.intro__title em{color:var(--blue)}
+.intro__subtitle{font-family:var(--display);font-size:1.6rem;font-style:italic;color:var(--gray-mid);margin-bottom:24px}
+.intro__desc{font-size:1rem;color:var(--gray-mid);max-width:520px;margin:0 auto 24px;line-height:1.7}
+.intro__tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.intro__tag{font-size:.78rem;font-weight:500;color:var(--gray-mid);background:var(--white);border:1px solid var(--gray-border);padding:5px 14px;border-radius:20px}
+.intro__footnote{font-size:.75rem;color:var(--gray-light);margin-top:16px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-size:.95rem;font-weight:600;padding:15px 30px;border-radius:50px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:.3s}
+.btn:hover{background:var(--black);color:var(--cream)}
+.btn--blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn--blue:hover{background:var(--blue-dark);border-color:var(--blue-dark)}
+.btn--ghost{border-color:var(--gray-border);color:var(--gray-mid);font-weight:400;font-size:.85rem}
+.btn--ghost:hover{border-color:var(--gray-mid);background:transparent;color:var(--black)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn span{transition:transform .3s}
+.btn:hover span{transform:translateX(4px)}
+
+/* PROGRESS */
+.progress{margin-bottom:40px;display:none}
+.progress__bar{height:4px;background:var(--gray-border);border-radius:4px;overflow:hidden}
+.progress__fill{height:100%;background:var(--blue);border-radius:4px;transition:width .4s ease}
+.progress__text{display:flex;justify-content:space-between;font-size:.78rem;color:var(--gray-light);margin-top:8px}
+
+/* QUESTION */
+.question{display:none;animation:fadeIn .4s ease}
+.question.active{display:block}
+.question__number{font-family:var(--display);font-size:2.5rem;color:var(--gray-border);margin-bottom:4px}
+.question__text{font-size:1.15rem;font-weight:600;color:var(--black);margin-bottom:8px;line-height:1.5}
+.question__hint{font-size:.85rem;color:var(--gray-light);margin-bottom:28px;font-style:italic}
+
+/* NUMERIC INPUT */
+.num-input{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.num-input input{font-family:var(--body);font-size:2.5rem;font-weight:600;width:120px;text-align:center;padding:16px;border:2px solid var(--gray-border);border-radius:12px;background:var(--white);color:var(--blue);outline:none;transition:.2s}
+.num-input input:focus{border-color:var(--blue)}
+.num-input input::-webkit-outer-spin-button,.num-input input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.num-input input[type=number]{-moz-appearance:textfield}
+.num-input__label{font-size:1rem;color:var(--gray-mid)}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:12px}
+.option{background:var(--white);border:2px solid var(--gray-border);border-radius:12px;padding:18px 20px;cursor:pointer;transition:all .25s ease;font-size:.95rem;color:var(--gray-dark);line-height:1.5}
+.option:hover{border-color:var(--blue);background:var(--blue-light);transform:translateX(4px)}
+.option.selected{border-color:var(--blue);background:var(--blue-light);color:var(--blue);font-weight:500}
+.option__content{display:flex;align-items:center}
+.option__letter{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gray-border);color:var(--gray-mid);font-size:.75rem;font-weight:600;margin-right:12px;transition:all .25s ease;flex-shrink:0}
+.option:hover .option__letter,.option.selected .option__letter{background:var(--blue);color:var(--white)}
+
+/* NAV */
+.nav{margin-top:32px;display:flex;justify-content:space-between;align-items:center}
+
+/* LEAD FORM */
+.lead-form{display:none;animation:fadeIn .4s ease}
+.lead-form.active{display:block}
+.lead-form__header{text-align:center;margin-bottom:32px}
+.lead-form__header h2{font-family:var(--display);font-size:2rem;font-style:italic;line-height:1.2;margin-bottom:8px}
+.lead-form__header h2 em{color:var(--blue)}
+.lead-form__header p{color:var(--gray-mid);font-size:.95rem}
+.form{display:flex;flex-direction:column;gap:14px}
+.form__f{display:flex;flex-direction:column;gap:4px}
+.form__f label{font-size:.78rem;font-weight:500;color:var(--gray-mid)}
+.form__f input{font-family:var(--body);font-size:.95rem;padding:13px 14px;border:1px solid var(--gray-border);border-radius:8px;background:var(--white);color:var(--black);outline:none;transition:.2s}
+.form__f input:focus{border-color:var(--blue)}
+.form__submit{margin-top:8px;align-self:center}
+
+/* RESULTS */
+.results{display:none;animation:fadeIn .5s ease}
+.results.active{display:block}
+
+/* Hero result */
+.res-hero{text-align:center;padding:40px 0;margin-bottom:40px;border-bottom:1px solid var(--gray-border)}
+.res-hero__badge{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);background:var(--blue-light);padding:5px 14px;border-radius:20px;margin-bottom:16px}
+.res-hero__pct{font-family:var(--display);font-size:5rem;font-style:italic;line-height:1}
+.res-hero__label{font-size:.82rem;color:var(--gray-light);margin-top:4px;margin-bottom:12px}
+.res-hero__name{font-family:var(--display);font-size:1.8rem;font-style:italic;margin-bottom:16px}
+.res-hero__bar{max-width:400px;margin:0 auto;height:8px;background:var(--gray-border);border-radius:8px;overflow:hidden}
+.res-hero__bar-fill{height:100%;border-radius:8px;transition:width 1.2s ease .3s}
+
+/* Money card */
+.money-card{background:var(--white);border:2px solid var(--blue);border-radius:16px;padding:32px;text-align:center;margin-bottom:40px}
+.money-card__amount{font-family:var(--display);font-size:2.8rem;font-style:italic;color:#D64545;line-height:1;margin-bottom:4px}
+.money-card__period{font-size:.85rem;color:var(--gray-mid);margin-bottom:16px}
+.money-card__detail{font-size:1rem;color:var(--gray-dark);line-height:1.7}
+.money-card__detail strong{color:var(--black)}
+.money-card__annual{margin-top:12px;font-size:.88rem;color:var(--gray-light)}
+
+/* Insights */
+.insight{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;padding:28px 24px;margin-bottom:16px;transition:transform .3s,box-shadow .3s}
+.insight:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,100,221,.08)}
+.insight__title{font-weight:600;font-size:1rem;margin-bottom:8px}
+.insight__text{font-size:.9rem;color:var(--gray-mid);line-height:1.7}
+.insight--highlight{border-color:var(--blue);background:var(--blue-light)}
+.insight--highlight .insight__title{color:var(--blue)}
+
+/* CTA */
+.res-cta{text-align:center;margin-top:40px;padding:32px;background:linear-gradient(180deg,var(--cream) 0%,var(--yellow-light) 100%);border-radius:16px}
+.res-cta h3{font-family:var(--display);font-size:1.4rem;font-style:italic;margin-bottom:8px}
+.res-cta p{font-size:.88rem;color:var(--gray-mid);margin-bottom:20px;max-width:440px;margin-left:auto;margin-right:auto}
+
+/* Footer */
+.qfooter{text-align:center;margin-top:64px;padding-top:24px;border-top:1px solid var(--gray-border)}
+.qfooter__text{font-size:.75rem;color:var(--gray-light)}
+.qfooter__text a{color:var(--blue);text-decoration:none}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(max-width:600px){
+.wrap{padding:24px 16px}
+.intro__title{font-size:2rem}
+.intro__subtitle{font-size:1.2rem}
+.question__number{font-size:2rem}
+.res-hero__pct{font-size:3.5rem}
+.money-card__amount{font-size:2rem}
+.num-input input{font-size:2rem;width:100px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- INTRO -->
+<div class="intro" id="intro">
+<div class="intro__badge">OCI — Operational Capacity Index</div>
+<h1 class="intro__title">Contratar ou <em>otimizar?</em></h1>
+<p class="intro__subtitle">Descubra quanto do seu time está sendo subutilizado.</p>
+<p class="intro__desc">O OCI mede a capacidade operacional real da sua equipe — quanto do talento que você já paga está gerando resultado e quanto está preso em trabalho que deveria ser automatizado.</p>
+<div class="intro__tags">
+<span class="intro__tag">7 perguntas</span>
+<span class="intro__tag">3 minutos</span>
+<span class="intro__tag">Resultado em R$</span>
+</div>
+<button class="btn btn--blue" onclick="startQuiz()">Iniciar diagnóstico <span>→</span></button>
+<p class="intro__footnote">Aplicado por Miastro. Resultado imediato e gratuito.</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress" id="progress">
+<div class="progress__bar"><div class="progress__fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress__text"><span id="progressText">1 de 7</span><span>OCI</span></div>
+</div>
+
+<!-- QUESTIONS -->
+<div id="questionsContainer"></div>
+
+<!-- LEAD FORM -->
+<div class="lead-form" id="leadForm">
+<div class="lead-form__header">
+<h2>Seu OCI está <em>pronto.</em></h2>
+<p>Preencha para ver o diagnóstico completo com cálculo em reais.</p>
+</div>
+<form class="form" id="leadFormEl" onsubmit="submitLead(event)">
+<div class="form__f"><label for="lname">Nome</label><input type="text" id="lname" name="name" placeholder="Seu nome" required></div>
+<div class="form__f"><label for="lcompany">Empresa</label><input type="text" id="lcompany" name="company" placeholder="Nome da empresa" required></div>
+<div class="form__f"><label for="lrole">Cargo</label><input type="text" id="lrole" name="role" placeholder="Ex: CEO, VP Comercial, Diretor de Ops" required></div>
+<div class="form__f"><label for="lemail">E-mail corporativo</label><input type="email" id="lemail" name="email" placeholder="seu@empresa.com" required></div>
+<input type="hidden" name="score" id="hiddenScore">
+<input type="hidden" name="level" id="hiddenLevel">
+<input type="hidden" name="team_size" id="hiddenTeam">
+<input type="hidden" name="waste_monthly" id="hiddenWaste">
+<input type="hidden" name="answers" id="hiddenAnswers">
+<input type="hidden" name="_subject" value="Novo OCI — Diagnóstico Miastro">
+<button type="submit" class="btn btn--blue form__submit">Ver meu diagnóstico <span>→</span></button>
+</form>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results"></div>
+
+<!-- FOOTER -->
+<div class="qfooter">
+<p class="qfooter__text">OCI — Operational Capacity Index por <a href="https://miastro.com.br" target="_blank">Miastro</a></p>
+</div>
+
+</div>
+
+<script>
+const COST_PER_PERSON = 15000; // R$ custo médio mensal
+
+const questions = [
+  {
+    type: 'number',
+    q: "Quantas pessoas compõem a equipe operacional da empresa?",
+    hint: "Inclua todos que executam trabalho repetível: vendas, marketing, ops, CS, admin."
+  },
+  {
+    type: 'choice',
+    q: "Quando a demanda cresce, qual é a primeira resposta da liderança?",
+    hint: "Pense no padrão real, não no ideal.",
+    opts: [
+      { text: "Abrir vaga. Crescimento sempre significou mais gente.", score: 1 },
+      { text: "Esticar o time atual — todo mundo absorve um pouco mais.", score: 2 },
+      { text: "Avaliar ferramentas ou fornecedores que aumentem a produtividade.", score: 3 },
+      { text: "Revisar processos e eliminar desperdício antes de qualquer contratação.", score: 4 }
+    ]
+  },
+  {
+    type: 'choice',
+    q: "Quanto do tempo da equipe é consumido por trabalho repetitivo ou administrativo?",
+    hint: "Relatórios, preenchimento manual, coordenação, follow-ups, copiar dados entre sistemas.",
+    opts: [
+      { text: "Mais de 60% — a rotina consome quase todo o dia.", score: 1 },
+      { text: "Entre 40–60% — sobra algum tempo, mas pouco.", score: 2 },
+      { text: "Entre 20–40% — a maioria do tempo é trabalho de valor.", score: 3 },
+      { text: "Menos de 20% — o time foca quase exclusivamente no que importa.", score: 4 }
+    ]
+  },
+  {
+    type: 'choice',
+    q: "Como tarefas repetitivas são executadas hoje?",
+    hint: "Proposta, atualização de CRM, relatório, onboarding, follow-up.",
+    opts: [
+      { text: "Totalmente manual — cada pessoa faz do seu jeito.", score: 1 },
+      { text: "Cada um improvisa com ferramentas próprias, sem padronização.", score: 2 },
+      { text: "Algumas tarefas são automatizadas, mas sem integração entre elas.", score: 3 },
+      { text: "Processos desenhados, padronizados e monitorados.", score: 4 }
+    ]
+  },
+  {
+    type: 'choice',
+    q: "Como informações e dados fluem entre as áreas?",
+    hint: "Marketing ↔ vendas ↔ CS ↔ operações ↔ financeiro.",
+    opts: [
+      { text: "Cada área vive no seu mundo. Dados ficam em silos.", score: 1 },
+      { text: "Planilhas compartilhadas e reuniões de alinhamento.", score: 2 },
+      { text: "Sistema centralizado com campos padronizados e relatórios.", score: 3 },
+      { text: "Dados integrados em tempo real com fluxos automatizados entre áreas.", score: 4 }
+    ]
+  },
+  {
+    type: 'choice',
+    q: "Existe alguém liderando a agenda de produtividade e otimização de processos?",
+    hint: "Não estamos falando de TI. Estamos falando de quem entende o negócio.",
+    opts: [
+      { text: "Não — cada área resolve do seu jeito, quando dá.", score: 1 },
+      { text: "TI cuida, mas não entende a operação de verdade.", score: 2 },
+      { text: "Um gestor acumula essa função com outras responsabilidades.", score: 3 },
+      { text: "Sim — existe um responsável ou parceiro dedicado a isso.", score: 4 }
+    ]
+  },
+  {
+    type: 'choice',
+    q: "Qual o maior gargalo para crescer receita nos próximos 12 meses?",
+    hint: "A resposta mais honesta, não a mais confortável.",
+    opts: [
+      { text: "Falta de gente — o time não dá conta do volume.", score: 1 },
+      { text: "Falta das ferramentas certas — o stack não ajuda.", score: 2 },
+      { text: "Processos ineficientes — o time é bom, mas a rotina trava.", score: 3 },
+      { text: "Falta de integração — temos as peças, mas não estão conectadas.", score: 4 }
+    ]
+  }
+];
+
+const levels = [
+  {
+    name: "Capacidade Crítica",
+    range: [6, 10],
+    color: "var(--red)",
+    summary: "A operação depende quase totalmente de esforço humano bruto. A maior parte do talento que você paga está presa em trabalho que deveria ser automatizado.",
+    insights: [
+      { title: "Cada contratação herda o mesmo problema", text: "O novo vendedor, analista ou coordenador vai gastar o tempo da mesma forma que os atuais: mais da metade em trabalho que não gera resultado. Contratar agora é multiplicar a ineficiência, não a capacidade.", highlight: true },
+      { title: "O time não está lento. Está atolado.", text: "Ninguém está parado. O problema é que profissionais caros estão fazendo trabalho barato. Proposta, CRM, relatório, follow-up — tudo na mão, tudo consumindo horas que deveriam estar gerando receita." },
+      { title: "Cada pessoa que sai leva o processo junto", text: "Sem padronização, o know-how vive na cabeça das pessoas. Quando alguém sai, recomeça do zero. O custo real de turnover é muito maior do que o RH calcula." }
+    ]
+  },
+  {
+    name: "Capacidade Limitada",
+    range: [11, 15],
+    color: "var(--orange)",
+    summary: "Existem iniciativas de produtividade, mas são pontuais e desconectadas. Ferramentas existem — o que falta é estratégia para conectá-las.",
+    insights: [
+      { title: "Ferramentas demais, resultado de menos", text: "O stack existe: CRM, planilhas, talvez algumas automações. Mas nada conversa entre si. O vendedor preenche CRM na mão depois de cada call. A proposta ainda leva dias. Os dados existem, mas não fluem.", highlight: true },
+      { title: "O gap está entre as áreas", text: "Marketing gera leads, vendas reclama da qualidade, CS recebe o cliente sem contexto. Cada área otimizou o seu pedaço. Ninguém costurou o todo." },
+      { title: "Produtividade média esconde desperdício grande", text: "A média da equipe mascara a realidade: quem é bom compensa quem está atolado. O resultado é um time que 'funciona', mas nunca escala. Crescer exige desbloquear os 40-50% de capacidade presa." }
+    ]
+  },
+  {
+    name: "Capacidade Parcial",
+    range: [16, 20],
+    color: "var(--green)",
+    summary: "Base sólida com processos e ferramentas razoáveis. O próximo salto é conectar e orquestrar o que já existe.",
+    insights: [
+      { title: "Vocês estão no ponto de inflexão", text: "A base está montada. O que separa a operação atual do próximo nível não é mais ferramenta — é orquestração. Conectar as peças que já existem pode devolver 15-20 horas por semana ao time. É o equivalente a contratar 1-2 pessoas sem aumentar folha.", highlight: true },
+      { title: "O custo da 'quase automação'", text: "Processos semi-automatizados podem ser piores que manuais: criam falsa sensação de controle enquanto o time ainda gasta horas conferindo, ajustando e corrigindo. A eficiência real vem quando o processo roda sem intervenção." },
+      { title: "A oportunidade é de escala, não de correção", text: "Diferente de quem está no nível 1, o desafio aqui não é consertar — é escalar. Cada ponto percentual de capacidade recuperada tem impacto direto em receita sem custo adicional." }
+    ]
+  },
+  {
+    name: "Capacidade Otimizada",
+    range: [21, 24],
+    color: "var(--blue)",
+    summary: "Operação entre as mais eficientes do mercado mid-market. Menos de 5% das empresas brasileiras operam nesse nível.",
+    insights: [
+      { title: "Vocês são exceção — o desafio agora é manter", text: "A maioria dos competidores opera 30-40 pontos percentuais abaixo de vocês. Essa vantagem é real, mas frágil. Processos otimizados precisam de monitoramento contínuo para não degradar com crescimento e turnover.", highlight: true },
+      { title: "O próximo nível é preditivo", text: "Com a operação orquestrada, o salto é antecipar: prever gargalos antes que apareçam, identificar riscos em deals e contas, recomendar ações antes do gestor pedir. A infraestrutura permite — a inteligência ainda pode ser adicionada." },
+      { title: "Escalar sem perder qualidade", text: "A operação funciona, mas depende de quem? Se os processos estão nas pessoas e não no sistema, o crescimento ainda tem teto. A pergunta é: esse nível se mantém se o time dobrar em 12 meses?" }
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let teamSize = 0;
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('progress').style.display = 'block';
+  renderQuestion(0);
+}
+
+function renderQuestion(idx) {
+  const container = document.getElementById('questionsContainer');
+  const q = questions[idx];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  let html = '<div class="question active">';
+  html += '<div class="question__number">0' + (idx + 1) + '</div>';
+  html += '<p class="question__text">' + q.q + '</p>';
+  if (q.hint) html += '<p class="question__hint">' + q.hint + '</p>';
+
+  if (q.type === 'number') {
+    html += '<div class="num-input">';
+    html += '<input type="number" id="teamInput" min="1" max="9999" placeholder="0" value="' + (teamSize || '') + '" autofocus>';
+    html += '<span class="num-input__label">pessoas</span>';
+    html += '</div>';
+    html += '<div class="nav">';
+    html += '<div></div>';
+    html += '<button class="btn btn--blue" id="numNext" onclick="submitNumber()">Próxima <span>→</span></button>';
+    html += '</div>';
+  } else {
+    html += '<div class="options">';
+    q.opts.forEach(function(opt, i) {
+      var sel = answers[idx] === i ? ' selected' : '';
+      html += '<div class="option' + sel + '" onclick="selectOption(' + idx + ',' + i + ')">';
+      html += '<div class="option__content">';
+      html += '<span class="option__letter">' + letters[i] + '</span>';
+      html += '<span>' + opt.text + '</span>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+    html += '<div class="nav">';
+    if (idx > 0) {
+      html += '<button class="btn btn--ghost" onclick="prevQuestion()">← Voltar</button>';
+    } else {
+      html += '<div></div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+  updateProgress(idx);
+
+  if (q.type === 'number') {
+    var inp = document.getElementById('teamInput');
+    inp.focus();
+    inp.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') submitNumber();
+    });
+  }
+}
+
+function submitNumber() {
+  var val = parseInt(document.getElementById('teamInput').value);
+  if (!val || val < 1) {
+    document.getElementById('teamInput').style.borderColor = 'var(--red)';
+    return;
+  }
+  teamSize = val;
+  answers[0] = val;
+  currentQ = 1;
+  renderQuestion(1);
+}
+
+function selectOption(qIdx, optIdx) {
+  answers[qIdx] = optIdx;
+
+  document.querySelectorAll('.option').forEach(function(el, i) {
+    if (i === optIdx) el.classList.add('selected');
+    else el.classList.remove('selected');
+  });
+
+  setTimeout(function() {
+    if (qIdx < questions.length - 1) {
+      currentQ = qIdx + 1;
+      renderQuestion(currentQ);
+    } else {
+      showLeadForm();
+    }
+  }, 350);
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion(currentQ);
+  }
+}
+
+function updateProgress(idx) {
+  var pct = ((idx + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = (idx + 1) + ' de ' + questions.length;
+}
+
+function calcResults() {
+  var totalScore = 0;
+  for (var i = 1; i < questions.length; i++) {
+    totalScore += questions[i].opts[answers[i]].score;
+  }
+  var maxScore = (questions.length - 1) * 4; // 24
+  var capacityPct = Math.round((totalScore / maxScore) * 100);
+  var wastePct = 100 - capacityPct;
+  var wasteMonthly = Math.round(teamSize * COST_PER_PERSON * (wastePct / 100));
+  var wasteAnnual = wasteMonthly * 12;
+  var wasteFTE = (teamSize * wastePct / 100).toFixed(1);
+  var level = levels.find(function(l) { return totalScore >= l.range[0] && totalScore <= l.range[1]; });
+
+  return {
+    totalScore: totalScore,
+    maxScore: maxScore,
+    capacityPct: capacityPct,
+    wastePct: wastePct,
+    wasteMonthly: wasteMonthly,
+    wasteAnnual: wasteAnnual,
+    wasteFTE: wasteFTE,
+    level: level,
+    levelIdx: levels.indexOf(level) + 1
+  };
+}
+
+function formatMoney(val) {
+  return 'R$ ' + val.toLocaleString('pt-BR');
+}
+
+function showLeadForm() {
+  document.getElementById('questionsContainer').innerHTML = '';
+  document.getElementById('progress').style.display = 'none';
+  document.getElementById('leadForm').classList.add('active');
+
+  var r = calcResults();
+  document.getElementById('hiddenScore').value = r.totalScore + '/' + r.maxScore + ' (' + r.capacityPct + '%)';
+  document.getElementById('hiddenLevel').value = r.level.name;
+  document.getElementById('hiddenTeam').value = teamSize;
+  document.getElementById('hiddenWaste').value = formatMoney(r.wasteMonthly) + '/mês';
+  document.getElementById('hiddenAnswers').value = JSON.stringify(
+    questions.map(function(q, i) {
+      if (q.type === 'number') return { question: q.q, answer: teamSize + ' pessoas' };
+      return { question: q.q, answer: q.opts[answers[i]].text, score: q.opts[answers[i]].score };
+    })
+  );
+}
+
+function submitLead(e) {
+  e.preventDefault();
+  var formData = new FormData(document.getElementById('leadFormEl'));
+  fetch('https://formspree.io/f/xpqoreao', {
+    method: 'POST',
+    body: formData,
+    headers: { 'Accept': 'application/json' }
+  }).then(function() { showResults(); }).catch(function() { showResults(); });
+}
+
+function showResults() {
+  document.getElementById('leadForm').classList.remove('active');
+
+  var r = calcResults();
+
+  var html = '';
+
+  // Hero
+  html += '<div class="res-hero">';
+  html += '<div class="res-hero__badge">OCI — Resultado</div>';
+  html += '<div class="res-hero__pct" style="color:#D64545">' + r.wastePct + '%</div>';
+  html += '<p class="res-hero__label">da capacidade operacional está sendo desperdiçada</p>';
+  html += '<h2 class="res-hero__name">' + r.level.name + '</h2>';
+  html += '<div class="res-hero__bar"><div class="res-hero__bar-fill" style="width:0%;background:#D64545"></div></div>';
+  html += '</div>';
+
+  // Money card
+  html += '<div class="money-card">';
+  html += '<div class="money-card__amount">' + formatMoney(r.wasteMonthly) + '</div>';
+  html += '<p class="money-card__period">por mês em capacidade desperdiçada</p>';
+  html += '<p class="money-card__detail">Sua equipe de <strong>' + teamSize + ' pessoas</strong> opera a <strong>' + r.capacityPct + '%</strong> da capacidade. ';
+  html += 'Os outros <strong>' + r.wastePct + '%</strong> equivalem a <strong>' + r.wasteFTE + ' profissionais inteiros</strong> dedicados a trabalho que não gera resultado.</p>';
+  html += '<p class="money-card__annual">Projeção anual: <strong>' + formatMoney(r.wasteAnnual) + '</strong></p>';
+  html += '</div>';
+
+  // Summary
+  html += '<p style="font-size:1rem;color:var(--gray-dark);margin-bottom:32px;line-height:1.7">' + r.level.summary + '</p>';
+
+  // Insights
+  r.level.insights.forEach(function(ins) {
+    var cls = ins.highlight ? ' insight--highlight' : '';
+    html += '<div class="insight' + cls + '">';
+    html += '<p class="insight__title">' + ins.title + '</p>';
+    html += '<p class="insight__text">' + ins.text + '</p>';
+    html += '</div>';
+  });
+
+  // CTA
+  html += '<div class="res-cta">';
+  html += '<h3>Quer recuperar essa capacidade?</h3>';
+  html += '<p>A Miastro entra na operação, identifica onde o talento está preso e constrói processos que devolvem capacidade ao time. Resultado em semanas, não meses.</p>';
+  html += '<a href="https://miastro.com.br/#contato" class="btn btn--blue" target="_blank">Agendar conversa <span>→</span></a>';
+  html += '</div>';
+
+  var results = document.getElementById('results');
+  results.innerHTML = html;
+  results.classList.add('active');
+
+  // Animate bar
+  setTimeout(function() {
+    var bar = document.querySelector('.res-hero__bar-fill');
+    if (bar) bar.style.width = r.capacityPct + '%';
+  }, 100);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
